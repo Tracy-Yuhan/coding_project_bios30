@@ -266,22 +266,28 @@ def extall_encode(message):
     hex_string=byte_string.hex()
     #covert hex to codons
     encoded_mes = hex_to_codons(hex_string)
+    print('take input and turn it into a list of codons: ',encoded_mes)
     f = open('ref_genome_watermelon_chro1.txt','r')
     reference_genome = f.read()
     reference_genome = reference_genome.replace('\n','')
     if encoded_mes != False:
         encoded_mes = encrypt_message(encoded_mes,reference_genome)
         encoded_mes = numbers_to_codon(encoded_mes)
+        print('the list of codons after encryption with reference genome: ', encoded_mes)
         #add a checksum val
         #DNA_seq_str = 'Tag'+DNA_seq_str + 'checksum' + 'Tag' 
         checksum_val = get_checksum(encoded_mes)
         checksum_codon = checksum_to_codons(checksum_val)
+        print('the added checksum codon: ', checksum_codon)
         encoded_mes = list_to_string(encoded_mes)
         encoded_mes = encoded_mes.upper()
         after_checksum = add_checksum_codon(encoded_mes,checksum_codon)
+        print('the encrypted DNA seq with an appended checksum val: ', after_checksum)
         # add tags to the encoded_mes
         after_checksum = add_tags(after_checksum)
+        print('after adding tags: ', after_checksum)
         final_mes = insert_random_seq(after_checksum, 500) 
+        print('after inserting into a random DNA library of length 500: ',final_mes)
         #save DNA str into a text file 
         f = open('extall_encoded.txt','w')
         f.write(final_mes)
@@ -292,7 +298,9 @@ def extall_encode(message):
 def extall_decode(filename,reference_genome):
     f = open(filename,'r')
     all_text = f.read()
+    print('the DNA paragraph extracted from the file: ', all_text)
     target_mes = target_region(all_text)
+    print('the target region that contains our message: ',target_mes)
     #check checksum val
     results = compare_checksum(target_mes)
     print('The result of the checksum test is:',results)
@@ -302,6 +310,7 @@ def extall_decode(filename,reference_genome):
         decrypt_mes = decrypt_message(target_mes,reference_genome)
         # number to codons
         decrypt_mes = numbers_to_codon(decrypt_mes)
+        print('taking the reference genome and decrypt, result: ',decrypt_mes)
         decoded_mes = codons_to_hex(decrypt_mes)
         decoded_mes = list_to_string(decoded_mes)
         byte_string = bytes.fromhex(decoded_mes)
